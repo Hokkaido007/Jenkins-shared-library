@@ -1,6 +1,12 @@
-def call(String status, String message = "") {
-    def chatId = "YOUR_TELEGRAM_CHAT_ID"
-    def token = "YOUR_TELEGRAM_BOT_TOKEN"
-    def text = "${status}: ${message}"
-    sh "curl -s -X POST https://api.telegram.org/bot${token}/sendMessage -d chat_id=${chatId} -d text='${text}'"
+def call(String message) {
+    withCredentials([
+        string(credentialsId: 'TELEGRAM_BOT_TOKEN', variable: 'TELEGRAM_TOKEN'),
+        string(credentialsId: 'TELEGRAM_CHAT_ID', variable: 'CHAT_ID')
+    ]) {
+        sh """
+        curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
+        -d chat_id=$CHAT_ID \
+        -d text='${message}'
+        """
+    }
 }
